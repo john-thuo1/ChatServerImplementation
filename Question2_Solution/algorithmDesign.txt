@@ -74,7 +74,17 @@ Client Implementation
 
 3. function declarations
     i) void send_message() {}
-    ii) void receive_message() {}
+    // send() function initiates transmission of a message from the specified socket to its peer. 
+   // It shall send a message only when the socket is connected (including when the peer of a connectionless socket has been set via connect()). 
+  // Specifies the socket file descriptor.
+       send(sockfd, message, strlen(message), 0);
+
+
+    ii) void receive_message() {}/bufffe
+    // recv() function retrieves data/message sent. This data can be stored in a file or into a string/buffer.
+       int receive = recv(sockfd, message, BUFFER_SZ, 0);
+
+    
     iii) int main(int argc, char *argv[]){}
          - Take in command line arguments // Port Number
          - Setup Socket settings. These are :
