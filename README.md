@@ -24,3 +24,6 @@
 
 Each question has its output screenshots in the screenshots folder.
 
+# Algorithm Design
+Each question's algorithm design is in the algorithmDesign.txt.
+
