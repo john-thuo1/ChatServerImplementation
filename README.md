@@ -11,6 +11,8 @@
 3. Follow the instructions specified in the terminal.
 
 
+# Question 2 Client Server Application(Chat Server)
+
 # Run Question 2 using make
 1. cd into Question2_Solution directory
 2. Run make // This will generate 2 executables : client and server
