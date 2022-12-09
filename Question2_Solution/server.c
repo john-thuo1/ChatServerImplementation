@@ -29,6 +29,7 @@ static _Atomic unsigned int cli_count = 0;
 static int uid = 10;
 
 
+
 // Function to print IP address of the client
 void print_ip_addr(struct sockaddr_in addr){
     printf("%d.%d.%d.%d",
@@ -114,6 +115,7 @@ void *handle_client(void *arg){
 	client_t *cli = (client_t *)arg;
 
 	// Name
+	// recv used to read incoming data on connection-oriented sockets, or connectionless sockets
 	if(recv(cli->sockfd, name, NAME_SZ, 0) <= 0 || strlen(name) <  2 || strlen(name) >= NAME_SZ-1){
 		printf("Enter the name correctly\n");
 		leave_flag = 1;
@@ -130,7 +132,8 @@ void *handle_client(void *arg){
 		if (leave_flag) {
 			break;
 		}
-
+              
+		//  recv() is used to read incoming data on connection-oriented sockets, or connectionless sockets
 		int receive = recv(cli->sockfd, buffer, BUFFER_SZ, 0);
 		if (receive > 0){
 			if(strlen(buffer) > 0){
@@ -185,28 +188,26 @@ int main(int argc, char *argv[]){
 	pthread_t tid;
 
 	//Socket settings 
-	//
 
 	listenfd = socket(AF_INET, SOCK_STREAM, 0);
-	//
 	
 	serv_addr.sin_family = AF_INET;
-	//
 
 	serv_addr.sin_addr.s_addr = inet_addr(ip);
-	//
 	
 	serv_addr.sin_port = htons(port);
 
    //Ignore pipe signals 
 	signal(SIGPIPE, SIG_IGN);
-
+ 
+    // The setsockopt() function provides an application program with the means to control socket behavior. 
 	if(setsockopt(listenfd, SOL_SOCKET,(SO_REUSEPORT | SO_REUSEADDR),(char*)&option,sizeof(option)) < 0){
 		perror("ERROR: setsockopt failed");
     return EXIT_FAILURE;
 	}
 
 	// Bind 
+	// binds a unique local name to the socket with descriptor socket.
     if(bind(listenfd, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0) {
     	perror("ERROR: Socket binding failed");
     return EXIT_FAILURE;
@@ -214,6 +215,8 @@ int main(int argc, char *argv[]){
 
 
     // Listen
+   // Listen indicates a readiness to accept client connection requests, and creates a connection request queue of length
+   // backlog to queue incoming connection requests.
     if (listen(listenfd, 10) < 0) {
     perror("ERROR: Socket listening failed");
     return EXIT_FAILURE;
@@ -222,6 +225,7 @@ int main(int argc, char *argv[]){
 
 	while(1){
 		socklen_t clilen = sizeof(cli_addr);
+		//  The function returns a client socket (the client that has connected).
 		connfd = accept(listenfd, (struct sockaddr*)&cli_addr, &clilen);
 
 		// Check if max clients is reached
