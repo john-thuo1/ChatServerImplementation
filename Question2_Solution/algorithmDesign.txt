@@ -1,0 +1,64 @@
+Code References 
+1. https://www.theinsanetechie.in/2014/01/a-simple-chat-program-in-c-tcp.html
+2. https://www.studentcpu.com/2009/12/how-implementation-of-chat-between.html
+3. https://www.geeksforgeeks.org/simple-client-server-application-in-c/
+4. https://forgetcode.com/c/1202-chat-app-tcp
+5. https://codingapples.com/2022/02/05/chat-application-in-c/
+
+Algorithm Design
+
+Server Implementation
+1. Import header files
+2. Declare Global Variables
+   i)   MAX_CLIENTS 100
+   ii)  NAME_SZ 32
+   iii) BUFFER_SZ 4096
+   iv)  pthread_mutex_t clients_mutex = PTHREAD_MUTEX_INITIALIZER;
+    v)  static _Atomic unsigned int cli_count = 0;
+    vi) static int uid = 10;
+3. Define Client Structure
+    i) sockaddr_in address;
+	  ii) int sockfd;
+	  iii) int uid;
+	  iv) char name[NAME_SZ];
+4. function declarations
+    i)  void print_ip_addr(struct sockaddr_in addr){} // Function to print IP address of the client
+    ii) void queue_add(client_t *cl){} // Function for Adding clients to the Queue
+    iii)void queue_remove(int uid){} // Function to remove clients from the queue
+    iv) void send_message(char *s, int uid){} // Function to send message to all clients using user id except sender 
+     v) void *handle_client(void *arg){} // Handle all communication with the client 
+     vi) int main(int argc, char *argv[]){}
+         - Take in command line arguments // Port Number
+         - Setup Socket settings. These are :
+	            listenfd = socket(AF_INET, SOCK_STREAM, 0);
+            	serv_addr.sin_family = AF_INET;
+            	serv_addr.sin_addr.s_addr = inet_addr(ip);
+	            serv_addr.sin_port = htons(port);
+         - Provide a means to control socket behavior using setsockopt()
+             if(setsockopt(listenfd, SOL_SOCKET,(SO_REUSEPORT | SO_REUSEADDR),(char*)&option,sizeof(option)) < 0){
+		          perror("ERROR: setsockopt failed");
+              return EXIT_FAILURE;
+	            }
+         - Bind local host(127.0.0.1) to the PORT Number of socket with descriptor socket using bind().
+               if(bind(listenfd, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0) {
+    	         perror("ERROR: Socket binding failed");
+               return EXIT_FAILURE;
+               }
+         - Listen indicates a readiness to accept client connection requests, and creates a connection request queue of length
+           backlog to queue incoming connection requests.
+           if (listen(listenfd, 10) < 0) {
+           perror("ERROR: Socket listening failed");
+           return EXIT_FAILURE;
+	         }
+         
+         - Accept - accept() function shall extract the first connection on the queue of pending connections, 
+                    create a new socket with the same socket type protocol and address family as the specified socket, 
+                    and allocate a new file descriptor for that socket. 
+                    If the queue has no pending connection requests, accept() blocks the caller unless socket is in nonblocking mode.
+                    The function returns a client socket (the client that has connected).
+
+           
+
+
+
+Client Implementation
