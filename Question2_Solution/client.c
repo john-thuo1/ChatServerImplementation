@@ -9,6 +9,7 @@
 #include <arpa/inet.h>
 #include <pthread.h>
 
+// CONSTANTS
 #define BUFFER_SZ 4096
 #define NAME_SZ 32
 
@@ -36,6 +37,10 @@ void catch_ctrl_c_and_exit(int sig) {
     flag = 1;
 }
 
+// send() function initiates transmission of a message from the specified socket to its peer. 
+// It shall send a message only when the socket is connected (including when the peer of a connectionless socket has been set via connect()). 
+// Specifies the socket file descriptor.
+
 void send_message() {
   char message[BUFFER_SZ + 200] = {};
 	char buffer[BUFFER_SZ + NAME_SZ +200] = {};
@@ -58,6 +63,7 @@ void send_message() {
   catch_ctrl_c_and_exit(2);
 }
 
+// The data/message is retrieved with a recv() call. The received data can be stored in a file, or into a string.
 void receive_message() {
 	char message[BUFFER_SZ + 200] = {};
   while (1) {
@@ -103,6 +109,10 @@ int main(int argc, char **argv){
 
 
   // Connect to Server
+  // Connection to a remote address is created with connect() call. 
+  // Here, we specify the IP address and the port that we are going to connect with. 
+  // If the connection is successful, a value is returned.
+	
   int err = connect(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr));
   if (err == -1) {
 		printf("ERROR: connect\n");
