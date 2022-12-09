@@ -20,4 +20,7 @@
 6. To test with multiple clients, open another terminal and cd into Question2_Solution directory and run instruction 5
 7. Proceed to enter your name and whichever texts you want to input.
 
+# Output Screenshots
+
+Each question has its output screenshots in the screenshots folder.
 
