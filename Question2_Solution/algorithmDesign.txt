@@ -9,10 +9,10 @@ Algorithm Design
 
 Server Implementation
 1. Import header files
-2. Declare Global Variables
-   i)   MAX_CLIENTS 100
-   ii)  NAME_SZ 32
-   iii) BUFFER_SZ 4096
+2. Declare Global Variables and Constants
+   i)   MAX_CLIENTS 100 // CONSTANT
+   ii)  NAME_SZ 32     // CONSTANT
+   iii) BUFFER_SZ 4096 // CONSTANT
    iv)  pthread_mutex_t clients_mutex = PTHREAD_MUTEX_INITIALIZER;
     v)  static _Atomic unsigned int cli_count = 0;
     vi) static int uid = 10;
@@ -27,6 +27,7 @@ Server Implementation
     iii)void queue_remove(int uid){} // Function to remove clients from the queue
     iv) void send_message(char *s, int uid){} // Function to send message to all clients using user id except sender 
      v) void *handle_client(void *arg){} // Handle all communication with the client 
+        - Use a recv function to read incoming data on connection-oriented sockets, or connectionless sockets
      vi) int main(int argc, char *argv[]){}
          - Take in command line arguments // Port Number
          - Setup Socket settings. These are :
@@ -62,3 +63,47 @@ Server Implementation
 
 
 Client Implementation
+
+1. Import header files
+2. Declare Global Variables and Constants
+  i)  BUFFER_SZ 4096  // CONSTANT
+  ii) NAME_SZ 32    // CONSTANT
+  iii)volatile sig_atomic_t flag = 0;
+  iv) int sockfd = 0; // File Descriptor
+   v) char name[NAME_SZ];
+
+3. function declarations
+    i) void send_message() {}
+    ii) void receive_message() {}
+    iii) int main(int argc, char *argv[]){}
+         - Take in command line arguments // Port Number
+         - Setup Socket settings. These are :
+	 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
+            	serv_addr.sin_family = AF_INET;
+            	serv_addr.sin_addr.s_addr = inet_addr(ip);
+	        serv_addr.sin_port = htons(port);
+	 - Connect to the Server 
+	 	int err = connect(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr));
+	 - Create send message thread
+	    pthread_t send_msg_thread;
+  	    if(pthread_create(&send_msg_thread, NULL, (void *) send_message, NULL) != 0){
+		printf("ERROR: pthread\n");
+    		return EXIT_FAILURE;
+	    }
+	    
+	  - Create receive message thread
+         	pthread_t recv_msg_thread;
+  		if(pthread_create(&recv_msg_thread, NULL, (void *) receive_message, NULL) != 0){
+		printf("ERROR: pthread\n");
+		return EXIT_FAILURE;
+	       }
+	  - Close socket File Descriptor
+	    
+		close(sockfd);
+
+		return EXIT_SUCCESS;
+	   
+
+
+           
+
